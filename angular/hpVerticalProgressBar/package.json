@@ -1,0 +1,13 @@
+{
+  "name": "vertical-progress-bar",
+  "version": "0.0.1",
+  "license": "UNLICENSED",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DenisBajet/hospitalityPulseOpen/angular/vertical-progress-bar"
+  },
+  "devDependencies": {
+    "angular": "^1.5.7"
+  }
+}

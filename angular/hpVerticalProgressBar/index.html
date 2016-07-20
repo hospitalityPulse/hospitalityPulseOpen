@@ -1,0 +1,31 @@
+<!doctype html>
+<html xmlns:ng="http://angularjs.org"
+      lang="en"
+      id="ng-app"
+      ng-app="hpulse.verticalprogressbar">
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <title>Vertical Progress Bar</title>
+
+        <script src="node_modules/angular/angular.js"></script>
+        <script src="__init.js"></script>
+        <script src="hpVerticalProgressBar.js"></script>
+        <style>
+            *[hp-vertical-progress-bar] {
+                width: 20px;
+                height: 100px;
+                border: 1px solid black;
+            }
+            *[hp-vertical-progress-bar] > div {
+                background-color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <div hp-vertical-progress-bar
+             data-progress="my_val"></div>
+    </body>
+</html>
