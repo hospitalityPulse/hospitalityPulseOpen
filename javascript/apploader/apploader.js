@@ -101,11 +101,26 @@
     }
 
     function attach_event(src, event, callback) {
-        if (src.addEventListener) {
-            src.addEventListener(event, callback, false);
+        var AddEventListener = 0;
+        var AttachEvent = 1;
+        var Attribute = 2;
+        var use_what;
+
+        if (event === "readystatechange") {
+            use_what = Attribute;
+        } else if (src.addEventListener) {
+            use_what = AddEventListener;
         } else if (src.attachEvent) {
-            src.attachEvent("on" + event, callback);
+            use_what = AttachEvent;
         } else {
+            use_what = Attribute;
+        }
+
+        if (use_what === AddEventListener) {
+            src.addEventListener(event, callback, false);
+        } else if (use_what === AttachEvent) {
+            src.attachEvent("on" + event, callback);
+        } else if (use_what === Attribute) {
             src["on" + event] = callback;
         }
     }
