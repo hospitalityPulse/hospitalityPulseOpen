@@ -61,7 +61,7 @@
             if (element.styleSheet) {
                 element.styleSheet.cssText = fully_loaded_css;
             } else {
-                element.innerText = fully_loaded_css;
+                element.innerHTML = fully_loaded_css;
             }
 
             angular.module(app_name + ".constants")
