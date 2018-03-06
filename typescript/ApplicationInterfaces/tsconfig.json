@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "umd",
+        "target": "es5",
+        "noImplicitAny": true,
+        "moduleResolution": "classic",
+        "allowJs": false,
+        "types": [
+            "jasmine",
+            "node"
+        ],
+        "outDir": "./build/"
+    },
+    "include": [
+        "./src/**/*.ts"
+    ],
+    "exclude": []
+}

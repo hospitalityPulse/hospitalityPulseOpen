@@ -1,2 +1,3 @@
 .gitignore
+typescript/ApplicationInterfaces/node_modules
 typescript/BetterTypeScriptCompiler/node_modules
