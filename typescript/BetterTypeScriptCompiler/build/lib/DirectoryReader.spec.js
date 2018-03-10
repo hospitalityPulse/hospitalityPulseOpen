@@ -9,7 +9,7 @@ describe("DirectoryReader", function () {
         createDirectories(["/tmp/utbtsc"]);
         createDirectories(["/tmp/utbtsc/l1", "/tmp/utbtsc/l2", "/tmp/utbtsc/l3"]);
         createFile("/tmp/utbtsc/f1.txt");
-        var reader = new DirectoryReader_1.DirectoryReaderNode();
+        var reader = new DirectoryReader_1.DirectoryReader();
         var directories = reader.readDirectoriesFrom("/tmp/utbtsc");
         expect(directories).toEqual(["/tmp/utbtsc/l1", "/tmp/utbtsc/l2", "/tmp/utbtsc/l3"]);
         cleanup();

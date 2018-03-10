@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
-var DirectoryReaderNode = /** @class */ (function () {
-    function DirectoryReaderNode() {
+var DirectoryReader = /** @class */ (function () {
+    function DirectoryReader() {
     }
-    DirectoryReaderNode.prototype.readDirectoriesFrom = function (directory) {
+    DirectoryReader.prototype.readDirectoriesFrom = function (directory) {
         var files = fs.readdirSync(directory, { encoding: "utf8" });
         var subDirectories = [];
         for (var _i = 0, files_1 = files; _i < files_1.length; _i++) {
@@ -17,6 +17,6 @@ var DirectoryReaderNode = /** @class */ (function () {
         }
         return subDirectories;
     };
-    return DirectoryReaderNode;
+    return DirectoryReader;
 }());
-exports.DirectoryReaderNode = DirectoryReaderNode;
+exports.DirectoryReader = DirectoryReader;

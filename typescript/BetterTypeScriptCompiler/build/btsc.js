@@ -1,9 +1,16 @@
-// Run as expected.
-// If any files IN SOURCE are created -- restart tsc.
-// If any files IN SOURCE are deleted -- stop tsc -- delete mapped output file -- start tsc.
-// 1) Get SOURCe directory.
-// 2) Add watch to SOURCE directory -- recursively.
-// const globDir = "./frontend/**/*.ts";
-// exec("find . -wholename '" + globDir + "'", (e, stdout, stderr) => {
-//     const lines = stdout.split("\n");
-// });
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var BTSC_1 = require("./lib/BTSC");
+var TscWrapper_1 = require("./lib/TscWrapper");
+var FolderWatcher_1 = require("./lib/FolderWatcher");
+var DirectoryReader_1 = require("./lib/DirectoryReader");
+var DirectoryHelper_1 = require("./lib/DirectoryHelper");
+var Logger_1 = require("./lib/Logger");
+DirectoryHelper_1.DirectoryHelper.reader = new DirectoryReader_1.DirectoryReader();
+var btsc = new BTSC_1.BTSC();
+var tscWrapper = new TscWrapper_1.TscWrapper();
+tscWrapper.setLogger(Logger_1.Logger.createWithFile("log.log"));
+btsc.setTscWrapper(tscWrapper);
+var folderWatcher = new FolderWatcher_1.FolderWatcher();
+btsc.setFolderWatcher(folderWatcher);
+btsc.startFor("./src");

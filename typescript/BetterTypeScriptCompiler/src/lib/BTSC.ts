@@ -1,29 +1,29 @@
-import { TSCWrapper } from "./TSCWrapper";
-import { FolderWatcher } from "./FolderWatcher";
+import { TscWrapper } from "./TscWrapper";
+import { FolderWatcher, RunningWatcher } from "./FolderWatcher";
 
 export class BTSC {
-    private tsc: TSCWrapper;
+    private tsc: TscWrapper;
     private folderWatcher: FolderWatcher;
 
-    public initialize() {
-        this.initializeFolderWatcher();
+    public setTscWrapper(tscWrapper: TscWrapper) {
+        this.tsc = tscWrapper;
     }
 
-    private initializeFolderWatcher() {
-        // this.folderWatcher.onFileCreate = (fileName: string) => {
-        //     console.log("On File Create", fileName);
-        // };
-        // this.folderWatcher.onFolderCreate = (folderName: string) => {
-        //     console.log("On Folder Create", folderName);
-        // };
-        // this.folderWatcher.onFileDelete = (fileName: string) => {
-        //     console.log("On File Delete", fileName);
-        // };
-        // this.folderWatcher.onFolderDelete = (folderName: string) => {
-        //     console.log("On Folder Delete", folderName);
-        //     if (this.folderWatcher.folderIsWatched(folderPath)) {
-        //         this.folderWatcher.stopWatchOnFolder(folderName);
-        //     }
-        // };
+    public setFolderWatcher(folderWatcher: FolderWatcher) {
+        this.folderWatcher = folderWatcher;
+    }
+
+    public startFor(path: string) {
+        this.tsc.start();
+        const watcher: RunningWatcher = this.folderWatcher.watch(path);
+        watcher.setOnFileCreatedDeletedOrRenamed(() => {
+            this.restart();
+        });
+    }
+
+    private restart() {
+        this.tsc.stop().onComplete(() => {
+            this.tsc.start();
+        });
     }
 }

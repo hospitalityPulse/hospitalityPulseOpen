@@ -1,50 +1,53 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var FolderWatcherImpl = /** @class */ (function () {
-    // private folderToSubfolders: { [key: string]: string[] };
-    function FolderWatcherImpl() {
-        this.watches = {};
+var fs = require("fs");
+var DirectoryHelper_1 = require("./DirectoryHelper");
+var FolderWatcher = /** @class */ (function () {
+    function FolderWatcher() {
     }
-    FolderWatcherImpl.prototype.placeWatchOnFolderAndSubfolders = function (folderPath) {
-        var _this = this;
-        var subfolders = this.getSubfoldersFromPath(folderPath);
-        subfolders.forEach(function (folderPath) {
-            _this.placeWatchOnFolder(folderPath);
-        });
+    FolderWatcher.prototype.watch = function (folderPath) {
+        var subfolders = DirectoryHelper_1.DirectoryHelper.getAllSubdirectories(folderPath);
+        var folders = [folderPath].concat(subfolders);
+        return RunningWatcher.startForFolders(folders);
     };
-    FolderWatcherImpl.prototype.getSubfoldersFromPath = function (folderPath) {
-        return [];
-    };
-    FolderWatcherImpl.prototype.placeWatchOnFolder = function (folderPath) {
-        // const watcher = fs.watch(folderPath, {}, (event: string, filename: string) => {
-        //     if (event === "create") {
-        //         this.onFileCreate(filename);
-        //     }
-        //     if (event === "delete") {
-        //         this.onFileDelete(filename);
-        //     }
-        // });
-        // this.watches[folderPath] = watcher;
-        // this.placeWatchOnFolderAndSubfolders(folderPath);
-    };
-    FolderWatcherImpl.prototype.removeWatchOnFolderAndSubfolders = function (folderPath) {
-        var _this = this;
-        var subfolders = this.getWatchedSubfoldersFromPath(folderPath);
-        subfolders.forEach(function (subPath) {
-            _this.removeWatchOnFolder(subPath);
-        });
-        this.removeWatchOnFolder(folderPath);
-    };
-    FolderWatcherImpl.prototype.getWatchedSubfoldersFromPath = function (folderPath) {
-        // return this.folderToSubfolders[folderPath];
-        return [];
-    };
-    FolderWatcherImpl.prototype.removeWatchOnFolder = function (folderPath) {
-        this.watches[folderPath].close();
-    };
-    FolderWatcherImpl.prototype.folderIsWatched = function (folderPath) {
-        return (folderPath in this.watches);
-    };
-    return FolderWatcherImpl;
+    return FolderWatcher;
 }());
-exports.FolderWatcherImpl = FolderWatcherImpl;
+exports.FolderWatcher = FolderWatcher;
+var RunningWatcher = /** @class */ (function () {
+    function RunningWatcher() {
+        this.onFileCreatedDeletedOrRenamed = function () { };
+    }
+    RunningWatcher.startForFolders = function (folders) {
+        var watcher = new RunningWatcher();
+        watcher.setFolders(folders);
+        watcher.start();
+        return watcher;
+    };
+    RunningWatcher.prototype.setFolders = function (folders) {
+        this.folders = folders;
+    };
+    RunningWatcher.prototype.start = function () {
+        var _this = this;
+        this.folders.forEach(function (folder) {
+            fs.watch(folder, { encoding: "utf8" }, function (event, filename) {
+                _this.onWatchFired(event);
+            });
+        });
+    };
+    RunningWatcher.prototype.onWatchFired = function (event) {
+        if (this.isCreatedDeletedOrRenamed(event)) {
+            this.onFileCreatedDeletedOrRenamed();
+        }
+    };
+    RunningWatcher.prototype.isCreatedDeletedOrRenamed = function (event) {
+        if (event === "rename") {
+            return true;
+        }
+        return false;
+    };
+    RunningWatcher.prototype.setOnFileCreatedDeletedOrRenamed = function (onFileCreated) {
+        this.onFileCreatedDeletedOrRenamed = onFileCreated;
+    };
+    return RunningWatcher;
+}());
+exports.RunningWatcher = RunningWatcher;

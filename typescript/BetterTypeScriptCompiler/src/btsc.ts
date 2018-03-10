@@ -1,15 +1,15 @@
+import { BTSC } from "./lib/BTSC";
+import { TscWrapper } from "./lib/TscWrapper";
+import { FolderWatcher } from "./lib/FolderWatcher";
+import { DirectoryReader } from "./lib/DirectoryReader";
+import { DirectoryHelper } from "./lib/DirectoryHelper";
+import { Logger } from "./lib/Logger";
 
-// Run as expected.
-// If any files IN SOURCE are created -- restart tsc.
-// If any files IN SOURCE are deleted -- stop tsc -- delete mapped output file -- start tsc.
-
-// 1) Get SOURCe directory.
-// 2) Add watch to SOURCE directory -- recursively.
-
-
-
-
-// const globDir = "./frontend/**/*.ts";
-// exec("find . -wholename '" + globDir + "'", (e, stdout, stderr) => {
-//     const lines = stdout.split("\n");
-// });
+DirectoryHelper.reader = new DirectoryReader();
+const btsc = new BTSC();
+const tscWrapper = new TscWrapper();
+tscWrapper.setLogger(Logger.createWithFile("log.log"));
+btsc.setTscWrapper(tscWrapper);
+const folderWatcher = new FolderWatcher();
+btsc.setFolderWatcher(folderWatcher);
+btsc.startFor("./src");

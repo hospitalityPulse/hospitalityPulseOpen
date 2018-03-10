@@ -1,61 +1,55 @@
 import * as fs from "fs";
+import { DirectoryHelper } from "./DirectoryHelper";
 
-export interface FolderWatcher {
-    placeWatchOnFolderAndSubfolders(folderPath: string): void;
-    removeWatchOnFolderAndSubfolders(folderPath: string): void;
-    folderIsWatched(folderPath: string): void;
+export class FolderWatcher {
+    public watch(folderPath: string): RunningWatcher {
+        const subfolders = DirectoryHelper.getAllSubdirectories(folderPath);
+        const folders = [folderPath].concat(subfolders);
+        return RunningWatcher.startForFolders(folders);
+    }
 }
 
-export class FolderWatcherImpl implements FolderWatcher {
-    private watches: { [key: string]: fs.FSWatcher };
-    // private folderToSubfolders: { [key: string]: string[] };
+export class RunningWatcher {
+    private onFileCreatedDeletedOrRenamed: () => void;
+    private folders: string[];
 
-    public constructor() {
-        this.watches = {};
+    public static startForFolders(folders: string[]): RunningWatcher {
+        const watcher = new RunningWatcher();
+        watcher.setFolders(folders);
+        watcher.start();
+        return watcher;
     }
 
-    public placeWatchOnFolderAndSubfolders(folderPath: string): void {
-        const subfolders = this.getSubfoldersFromPath(folderPath);
-        subfolders.forEach((folderPath: string) => {
-            this.placeWatchOnFolder(folderPath);
+    private constructor() {
+        this.onFileCreatedDeletedOrRenamed = () => { };
+    }
+
+    private setFolders(folders: string[]) {
+        this.folders = folders;
+    }
+
+    private start() {
+        this.folders.forEach((folder: string) => {
+            fs.watch(folder, { encoding: "utf8" }, (event: string, filename: string) => {
+                this.onWatchFired(event);
+            });
         });
     }
 
-    private getSubfoldersFromPath(folderPath: string): string[] {
-        return [];
+    private onWatchFired(event: string) {
+        if (this.isCreatedDeletedOrRenamed(event)) {
+            this.onFileCreatedDeletedOrRenamed();
+        }
     }
 
-    private placeWatchOnFolder(folderPath: string) {
-        // const watcher = fs.watch(folderPath, {}, (event: string, filename: string) => {
-        //     if (event === "create") {
-        //         this.onFileCreate(filename);
-        //     }
-        //     if (event === "delete") {
-        //         this.onFileDelete(filename);
-        //     }
-        // });
-        // this.watches[folderPath] = watcher;
-        // this.placeWatchOnFolderAndSubfolders(folderPath);
+    private isCreatedDeletedOrRenamed(event: string) {
+        if (event === "rename") {
+            return true;
+        }
+        return false;
     }
 
-    public removeWatchOnFolderAndSubfolders(folderPath: string): void {
-        const subfolders = this.getWatchedSubfoldersFromPath(folderPath);
-        subfolders.forEach((subPath: string) => {
-            this.removeWatchOnFolder(subPath);
-        });
-        this.removeWatchOnFolder(folderPath);
-    }
-
-    private getWatchedSubfoldersFromPath(folderPath: string): string[] {
-        // return this.folderToSubfolders[folderPath];
-        return [];
-    }
-
-    private removeWatchOnFolder(folderPath: string) {
-        this.watches[folderPath].close();
-    }
-
-    public folderIsWatched(folderPath: string): boolean {
-        return (folderPath in this.watches);
+    public setOnFileCreatedDeletedOrRenamed(onFileCreated: () => void) {
+        this.onFileCreatedDeletedOrRenamed = onFileCreated;
     }
 }

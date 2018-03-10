@@ -1,10 +1,6 @@
 import * as fs from "fs";
 
-export interface DirectoryReader {
-    readDirectoriesFrom(directory: string): string[];
-}
-
-export class DirectoryReaderNode implements DirectoryReader {
+export class DirectoryReader {
     public readDirectoriesFrom(directory: string): string[] {
         const files = fs.readdirSync(directory, { encoding: "utf8" });
         const subDirectories: string[] = [];
