@@ -13,7 +13,7 @@ In your HTML, right before the </body> tag, add the following line:
 <script id="apploader" src="..."></script>
 
 The src path takes the following URL:
-  /apploader.js?js=main.js&css=main.css&const=%F2const%F2path&app=MyAngularApp
+  /apploader.js?js=main.js&css=main.css&const=%2Fconst%2Fpath&app=MyAngularApp
 
 id="apploader" is important and must remain.
 
